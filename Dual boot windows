@@ -1,0 +1,36 @@
+Preapare : 1 USB (16GB) MACOS opencore + 1 USB WINDOWS (UEFI) 
+Make Install Mac OS with USB Opencore
+Boot to recovery open Disk uility creat 2 Volume APFS put the name MacOS and Windows
+install Mac OS
+Copy Boot and OC forder to EFI partition
+Make sure MAC OS boot normal 
+Boot to Windows install USB
+At select disk windows delete Windows partition and install Windows to this Volume
+reboot 
+If you have trouble with windows install Using guide Below
+
+Creating Windows Partitions
+diskpart
+list disk
+select disk 0 (replace with disk number)
+partition efi size=100
+format quick fs=fat32 label="System"
+assign letter="S"
+create partition msr size=16
+create partition primary
+format quick fs=ntfs label="Windows"
+assign letter="W"
+
+Installing Windows (If you made installer in Windows)
+list volume
+exit
+dism /Get-WimInfo /WimFile:D:\sources\install.esd (replace D with USB drive letter)
+dism /Apply-Image /ImageFile:D:\sources\install.esd /Index:1 /ApplyDir:W:\ (replace D with USB drive letter)
+bcdboot W:\windows /s S: /f UEFI
+
+Installing Windows (If you made installer in macOS)
+list volume
+exit
+dism /Get-WimInfo /WimFile:D:\Sources\install.wim (replace D with USB drive letter)
+dism /Apply-Image /ImageFile:D:\Sources\install.wim /Index:1 /ApplyDir:W:\ (replace D with USB drive letter)
+bcdboot W:\windows /s S: /f UEFI
